@@ -1,0 +1,12 @@
+--index-url https://pypi.python.org/simple/
+
+-e .
+
+numpy == 1.17.0
+pip == 19.3.1
+scipy == 1.2.0
+# tensorflow-gpu == 2.0.0
+tensorflow == 2.0.0
+matplotlib == 3.0.2
+pandas == 0.24.0
+scikit-image == 0.16.2
