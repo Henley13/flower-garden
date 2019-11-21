@@ -6,6 +6,7 @@ multidimensional tensor (np.ndarray).
 """
 
 import warnings
+import hashlib
 import numpy as np
 from skimage import io
 
@@ -29,11 +30,15 @@ def read_image(path):
         A 2-d or 3-d tensor with spatial dimensions.
 
     """
-    # TODO allow more input dtype
     # read image
     tensor = io.imread(path)
 
     return tensor
+
+
+def parse_images():
+
+    yield
 
 
 # ### Write ###
@@ -58,3 +63,25 @@ def save_image(image, path):
         io.imsave(path, image)
 
     return
+
+
+# ### Hash ###
+
+def get_md5_number(a):
+    """Get a number from the md5 hash value expressed in hexadecimal.
+
+    Parameters
+    ----------
+    a : python object
+        Object used to compute the md5 value.
+
+    Returns
+    -------
+    x : int
+        md5 value.
+    """
+    # get md5
+    md5 = hashlib.md5(a)
+    x = int(md5.hexdigest(), 16)
+
+    return x

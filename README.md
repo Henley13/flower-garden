@@ -1,27 +1,34 @@
 # flower-garden
-Some Generative Adversarial Network implementations with flower images !
+Some generative models implemented with flower images !
 
-__Dataset__: 
+__Datasets__: 
 
-[Dataset 1](https://www.kaggle.com/olgabelitskaya/flower-color-images)
+[Dataset 1 (Flower Color Images in Kaggle)](https://www.kaggle.com/olgabelitskaya/flower-color-images)
 
-0 => phlox;  
-1 => rose;  
-2 => calendula;  
-3 => iris;  
-4 => leucanthemum maximum;  
-5 => bellflower;  
-6 => viola;  
-7 => rudbeckia laciniata (Goldquelle);  
-8 => peony;  
-9 => aquilegia.  
+- 210 png images with a good quality.
+- 10 species of flowers:
+    - Phlox
+    - Rose
+    - Calendula
+    - Iris
+    - Leucanthemum maximum
+    - Bellflower
+    - Viola
+    - Rudbeckia laciniata (Goldquelle)
+    - Peony
+    - Aquilegia
 
-[Dataset 2](https://www.kaggle.com/ll01dm/t91-image-dataset)
+![Mosaic 1](images/mosaic_1.png)
 
+[Dataset 2 (T91 Image Dataset in Kaggle)](https://www.kaggle.com/ll01dm/t91-image-dataset)
 
-[Dataset 3](https://www.kaggle.com/saidakbarp/17-category-flowers)
+- 55 cropped png images of flowers with a good quality.
 
+![Mosaic 1](images/mosaic_2.png)
 
-[Dataset 4](http://www.robots.ox.ac.uk/~vgg/data/flowers/102/index.html)
+[Dataset 3 (102 Category Flower Dataset in Oxford)](http://www.robots.ox.ac.uk/~vgg/data/flowers/102/index.html)
 
+- 8189 jpg images potentially with text inside.
+- 102 flower categories (between 40 and 258 images per class).
 
+![Mosaic 1](images/mosaic_3.png)
