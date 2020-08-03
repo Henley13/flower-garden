@@ -12,7 +12,8 @@ import pandas as pd
 import numpy as np
 
 import flowers.utils as utils
-import dcgan.utils as dcgan
+
+from dcgan import build_generator_model, build_discriminator_model, train
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -74,13 +75,12 @@ if __name__ == "__main__":
     dataset = dataset.batch(batch_size=128)
 
     # build models
-    generator = dcgan.build_generator_model()
-    discriminator = dcgan.build_discriminator_model()
+    generator = build_generator_model()
+    discriminator = build_discriminator_model()
 
     # train model
     nb_epochs = 50
-    dcgan.train(generator, discriminator,
-                dataset, nb_epochs, training_directory)
+    train(generator, discriminator, dataset, nb_epochs, training_directory)
 
     print()
     utils.end_script(start_time)

@@ -305,7 +305,7 @@ def train(generator, discriminator, dataset, nb_epochs, training_directory):
     checkpoints_directory = os.path.join(training_directory, "checkpoints")
     if not os.path.isdir(checkpoints_directory):
         os.mkdir(checkpoints_directory)
-    checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
+    checkpoint_prefix = os.path.join(checkpoints_directory, "ckpt")
     checkpoint = tf.train.Checkpoint(
         generator_optimizer=generator_optimizer,
         discriminator_optimizer=discriminator_optimizer,
