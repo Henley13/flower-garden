@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# mac dotfiles
+.DS_Store
+
+# Pycharm
+.idea/
+
+# folders
+notebooks/
