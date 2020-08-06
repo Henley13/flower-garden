@@ -75,29 +75,13 @@ def initialize_script(log_directory, experiment_name=None):
 
     # get date of execution
     now = datetime.datetime.now()
-    date = now.strftime("%Y-%m-%d %H:%M:%S")
-    year = date.split("-")[0]
-    month = date.split("-")[1]
-    day = date.split("-")[2].split(" ")[0]
-    hour = date.split(":")[0].split(" ")[1]
-    minute = date.split(":")[1]
-    second = date.split(":")[2]
+    date = now.strftime("%Y%m%d-%H%M%S")
 
     # format log name
-    log_date = year + month + day + hour + minute + second
-    if previous_filename is not None:
-        operation = os.path.basename(previous_filename)
-        operation = operation.split(".")[0]
-        if experiment_name is not None:
-            log_name = "{0}_{1}_{2}".format(
-                log_date, operation, experiment_name)
-        else:
-            log_name = "{0}_{1}".format(log_date, operation)
+    if experiment_name is not None:
+        log_name = "{0}-{1}".format(date, experiment_name)
     else:
-        if experiment_name is not None:
-            log_name = "{0}_{1}".format(log_date, experiment_name)
-        else:
-            log_name = "{0}".format(log_date)
+        log_name = "{0}-script".format(date)
 
     # initialize logging in a specific log directory
     path_log_directory = os.path.join(log_directory, log_name)
