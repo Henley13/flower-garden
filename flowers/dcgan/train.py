@@ -49,6 +49,9 @@ if __name__ == "__main__":
     input_directory = args.input_directory
     output_directory = args.output_directory
     log_directory = args.log_directory
+    nb_epochs = 50
+    batch_size = 128
+    noise_dim = 100
 
     # check directories exists
     utils.check_directories([input_directory, output_directory, log_directory])
@@ -56,8 +59,12 @@ if __name__ == "__main__":
     # initialize script
     start_time, training_directory = utils.initialize_script(log_directory)
     print()
+    
+    import sys
+    sys.exit()
 
     # prepare dataset
+    print("Prepare dataset", "\n")
     path = os.path.join(input_directory, "data.csv")
     df = pd.read_csv(path, sep=";", encoding="utf-8")
     filenames = list(df.loc[:, "filename"])
@@ -72,16 +79,15 @@ if __name__ == "__main__":
     X_train = (X_train - 127.5) / 127.5
     dataset = tf.data.Dataset.from_tensor_slices(X_train)
     dataset = dataset.shuffle(buffer_size=60000, seed=13)
-    dataset = dataset.batch(batch_size=128)
+    dataset = dataset.batch(batch_size=batch_size)
 
     # build models
+    print("Build model", "\n")
     generator = build_generator_model()
     discriminator = build_discriminator_model()
 
     # train model
-    nb_epochs = 50
-    batch_size = 128
-    noise_dim = 100
+    print("Train model", "\n")
     train(generator, discriminator, dataset,
           nb_epochs, batch_size, noise_dim,
           training_directory)
