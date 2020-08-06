@@ -76,8 +76,6 @@ def plot_mosaic(images, nb_row, nb_col, framesize=(10, 10),
     plt.yticks([])
     plt.tight_layout()
 
-    plt.show()
-
     # output
     if path_output is not None:
         save_plot(path_output, ext)

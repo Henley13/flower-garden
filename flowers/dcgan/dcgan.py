@@ -17,6 +17,7 @@ Reference 2: https://www.tensorflow.org/tutorials/generative/dcgan
 
 import os
 import time
+import datetime
 
 import tensorflow as tf
 
@@ -221,23 +222,22 @@ def build_discriminator_model(input_shape=(64, 64, 3)):
 
 # ### Training functions ###
 
-cross_entropy = BinaryCrossentropy(
-    from_logits=True,
-    name='binary_crossentropy')
-
-
 def generator_loss(fake_output):
-    loss = cross_entropy(tf.ones_like(fake_output), fake_output)
-
+    loss = BinaryCrossentropy(
+        from_logits=True,
+        name='generator_loss')(tf.ones_like(fake_output), fake_output)
     return loss
 
 
-def discriminator_loss(real_output, fake_output):
-    fake_loss = cross_entropy(tf.zeros_like(fake_output), fake_output)
-    real_loss = cross_entropy(tf.ones_like(real_output), real_output)
-    total_loss = real_loss + fake_loss
-
-    return total_loss
+def discriminator_losses(real_output, fake_output):
+    fake_loss = BinaryCrossentropy(
+        from_logits=True,
+        name='discriminator_fake_loss')(tf.zeros_like(fake_output), fake_output)
+    real_loss = BinaryCrossentropy(
+        from_logits=True,
+        name='discriminator_real_loss')(tf.ones_like(real_output), real_output)
+    total_loss = tf.math.add(fake_loss, real_loss, name="discriminator_loss")
+    return fake_loss, real_loss, total_loss
 
 
 generator_optimizer = Adam(
@@ -250,23 +250,28 @@ discriminator_optimizer = Adam(
     name='Adam_D')
 
 
-#@tf.function
-def train_step(real_images, generator, discriminator,
-               batch_size=128, noise_dim=100):
-    noise = tf.random.normal([batch_size, noise_dim])
+generator_metric = Mean('loss_generator', dtype=tf.float32)
+discriminator_metric = Mean('loss_discriminator', dtype=tf.float32)
+discriminator_metric_fake = Mean('loss_discriminator_fake', dtype=tf.float32)
+discriminator_metric_real = Mean('loss_discriminator_real', dtype=tf.float32)
+
+
+@tf.function
+def train_one_step(input_noise, real_images, generator, discriminator):
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-        generated_images = generator(noise, training=True)
+        generated_images = generator(input_noise, training=True)
         real_output = discriminator(real_images, training=True)
         fake_output = discriminator(generated_images, training=True)
-        gen_loss = generator_loss(fake_output)
-        disc_loss = discriminator_loss(real_output, fake_output)
+        g_loss = generator_loss(fake_output)
+        d_fake_loss, d_real_loss, d_loss = discriminator_losses(
+            real_output, fake_output)
 
     # compute gradients
     gradients_of_generator = gen_tape.gradient(
-        gen_loss, generator.trainable_variables)
+        g_loss, generator.trainable_variables)
     gradients_of_discriminator = disc_tape.gradient(
-        disc_loss, discriminator.trainable_variables)
+        d_loss, discriminator.trainable_variables)
 
     # apply backpropagation
     generator_optimizer.apply_gradients(
@@ -274,11 +279,7 @@ def train_step(real_images, generator, discriminator,
     discriminator_optimizer.apply_gradients(
         zip(gradients_of_discriminator, discriminator.trainable_variables))
 
-    # compute metrics
-    mean_gen_loss = Mean('loss_generator', dtype=tf.float32)(gen_loss)
-    mean_disc_loss = Mean('loss_discriminator', dtype=tf.float32)(disc_loss)
-
-    return mean_gen_loss, mean_disc_loss
+    return g_loss, d_loss, d_fake_loss, d_real_loss
 
 
 def generate_and_plot(generator, input_noise,
@@ -292,10 +293,15 @@ def generate_and_plot(generator, input_noise,
     return
 
 
-def train(generator, discriminator, dataset, nb_epochs, training_directory):
+def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
+          training_directory):
+    # get training time
+    now = datetime.datetime.now()
+    date = now.strftime("%Y_%m_%d-%H_%M_%S")
 
     # initialize summaries
-    tensorboard_directory = os.path.join(training_directory, "tensorboard")
+    tensorboard_directory = os.path.join(training_directory,
+                                         "{0}-tensorboard".format(date))
     if not os.path.isdir(tensorboard_directory):
         os.mkdir(tensorboard_directory)
     summary_writer = tf.summary.create_file_writer(tensorboard_directory)
@@ -312,22 +318,35 @@ def train(generator, discriminator, dataset, nb_epochs, training_directory):
         discriminator=discriminator)
 
     # loop over epochs
-    mean_gen_loss, mean_disc_loss = None, None
-    test_noise = tf.random.normal([25, 100])
+    g_loss, d_loss, d_fake_loss, d_real_loss = None, None, None, None
+    test_noise = tf.random.normal([25, noise_dim])
     for epoch in range(nb_epochs):
         start = time.time()
 
-        for batch_images in dataset:
-            mean_gen_loss, mean_disc_loss = train_step(
-                batch_images, generator, discriminator)
+        for batch_real_images in dataset:
+            input_noise = tf.random.normal([batch_size, noise_dim])
+            g_loss, d_loss, d_fake_loss, d_real_loss = train_one_step(
+                input_noise, batch_real_images, generator, discriminator)
+
+        # update metrics
+        generator_metric.update_state(g_loss)
+        discriminator_metric.update_state(d_loss)
+        discriminator_metric_fake.update_state(d_fake_loss)
+        discriminator_metric_real.update_state(d_real_loss)
 
         # write summaries
         with summary_writer.as_default():
             tf.summary.scalar('loss_generator',
-                              mean_gen_loss.result(),
+                              generator_metric.result(),
                               step=epoch)
             tf.summary.scalar('loss_discriminator',
-                              mean_disc_loss.result(),
+                              discriminator_metric.result(),
+                              step=epoch)
+            tf.summary.scalar('loss_discriminator_fake',
+                              discriminator_metric_fake.result(),
+                              step=epoch)
+            tf.summary.scalar('loss_discriminator_real',
+                              discriminator_metric_real.result(),
                               step=epoch)
 
         # save model every 10 epochs
@@ -342,13 +361,16 @@ def train(generator, discriminator, dataset, nb_epochs, training_directory):
         # verbose
         end = time.time()
         duration = end - start
-        print("Epoch {0} ({1} sec): Generator Loss {2} | "
-              "Discriminator Loss {3}"
-              .format(epoch, duration, mean_gen_loss, mean_disc_loss))
+        print("Epoch {0} ({1:0.3f} sec): Generator Loss {2:0.3f} | "
+              "Discriminator Loss {3:0.3f} (fake {4:0.3f}, real {5:0.3f})"
+              .format(epoch, duration, g_loss,
+                      d_loss, d_fake_loss, d_real_loss))
 
         # reset metrics at every epoch
-        mean_gen_loss.reset_states()
-        mean_disc_loss.reset_states()
+        generator_metric.reset_states()
+        discriminator_metric.reset_states()
+        discriminator_metric_fake.reset_states()
+        discriminator_metric_real.reset_states()
 
     # save and plot at the end of the training
     checkpoint.save(file_prefix=checkpoint_prefix)

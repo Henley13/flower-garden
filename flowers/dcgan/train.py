@@ -80,7 +80,11 @@ if __name__ == "__main__":
 
     # train model
     nb_epochs = 50
-    train(generator, discriminator, dataset, nb_epochs, training_directory)
+    batch_size = 128
+    noise_dim = 100
+    train(generator, discriminator, dataset,
+          nb_epochs, batch_size, noise_dim,
+          training_directory)
 
     print()
     utils.end_script(start_time)
