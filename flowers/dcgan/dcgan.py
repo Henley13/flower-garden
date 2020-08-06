@@ -288,6 +288,8 @@ def generate_and_plot(generator, input_noise,
                       path_output=None, ext="png", show=True):
     generated_images = generator(input_noise, training=False)
     generated_images = generated_images.numpy()
+    generated_images *= 127.5
+    generated_images += 127.5
     generated_images = img_as_ubyte(generated_images)
     utils.plot_mosaic(generated_images, nb_row=5, nb_col=5, framesize=(10, 10),
                       path_output=path_output, ext=ext, show=show)

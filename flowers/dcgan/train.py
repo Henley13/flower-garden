@@ -61,7 +61,7 @@ if __name__ == "__main__":
         log_directory, experiment_name="train_dcgan")
 
     # prepare dataset
-    print("Prepare dataset", "\n")
+    print("Prepare dataset...")
     path = os.path.join(input_directory, "data.csv")
     df = pd.read_csv(path, sep=";", encoding="utf-8")
     filenames = list(df.loc[:, "filename"])
@@ -77,15 +77,15 @@ if __name__ == "__main__":
     dataset = tf.data.Dataset.from_tensor_slices(X_train)
     dataset = dataset.shuffle(buffer_size=60000, seed=13)
     dataset = dataset.batch(batch_size=batch_size)
-    print("Dataset length: {0}".format(len(X_train)))
+    print("\r Dataset length: {0}".format(len(X_train)), "\n")
 
     # build models
-    print("Build model", "\n")
+    print("Build model...", "\n")
     generator = build_generator_model()
     discriminator = build_discriminator_model()
 
     # train model
-    print("Train model", "\n")
+    print("Train model...", "\n")
     train(generator, discriminator, dataset,
           nb_epochs, batch_size, noise_dim,
           training_directory)
