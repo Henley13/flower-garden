@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # initialize script
     start_time, training_directory = utils.initialize_script(log_directory)
     print()
-    
+
     import sys
     sys.exit()
 
