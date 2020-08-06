@@ -221,7 +221,6 @@ def build_discriminator_model(input_shape=(64, 64, 3)):
 
 # ### Training functions ###
 
-
 cross_entropy = BinaryCrossentropy(
     from_logits=True,
     name='binary_crossentropy')
@@ -251,7 +250,7 @@ discriminator_optimizer = Adam(
     name='Adam_D')
 
 
-@tf.function
+#@tf.function
 def train_step(real_images, generator, discriminator,
                batch_size=128, noise_dim=100):
     noise = tf.random.normal([batch_size, noise_dim])
