@@ -19,6 +19,7 @@ import os
 import time
 
 import tensorflow as tf
+import numpy as np
 
 from tensorflow.keras import Model
 from tensorflow.keras.initializers import RandomNormal
@@ -290,7 +291,7 @@ def generate_and_plot(generator, input_noise,
     generated_images = generated_images.numpy()
     generated_images *= 127.5
     generated_images += 127.5
-    generated_images = img_as_ubyte(generated_images)
+    generated_images = generated_images.astype(np.uint8)
     utils.plot_mosaic(generated_images, nb_row=5, nb_col=5, framesize=(10, 10),
                       path_output=path_output, ext=ext, show=show)
 
