@@ -91,7 +91,7 @@ def initialize_script(log_directory, experiment_name=None):
 
     # copy python script in the log directory
     if previous_filename is not None:
-        path_output = os.path.join(path_log_directory,
+        path_output = os.path.join(path_log_file,
                                    os.path.basename(previous_filename))
         shutil.copyfile(previous_filename, path_output)
 

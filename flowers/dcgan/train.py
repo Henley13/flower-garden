@@ -77,6 +77,7 @@ if __name__ == "__main__":
     dataset = tf.data.Dataset.from_tensor_slices(X_train)
     dataset = dataset.shuffle(buffer_size=60000, seed=13)
     dataset = dataset.batch(batch_size=batch_size)
+    print("Dataset length: {0}".format(len(X_train)))
 
     # build models
     print("Build model", "\n")

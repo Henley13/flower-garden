@@ -17,7 +17,6 @@ Reference 2: https://www.tensorflow.org/tutorials/generative/dcgan
 
 import os
 import time
-import datetime
 
 import tensorflow as tf
 
@@ -257,7 +256,10 @@ discriminator_metric_real = Mean('loss_discriminator_real', dtype=tf.float32)
 
 
 @tf.function
-def train_one_step(input_noise, real_images, generator, discriminator):
+def train_one_step(batch_size, noise_dim, real_images,
+                   generator, discriminator):
+    # simulate random input
+    input_noise = tf.random.normal([batch_size, noise_dim])
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = generator(input_noise, training=True)
@@ -295,13 +297,8 @@ def generate_and_plot(generator, input_noise,
 
 def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
           training_directory):
-    # get training time
-    now = datetime.datetime.now()
-    date = now.strftime("%Y_%m_%d-%H_%M_%S")
-
     # initialize summaries
-    tensorboard_directory = os.path.join(training_directory,
-                                         "{0}-tensorboard".format(date))
+    tensorboard_directory = os.path.join(training_directory, "tensorboard")
     if not os.path.isdir(tensorboard_directory):
         os.mkdir(tensorboard_directory)
     summary_writer = tf.summary.create_file_writer(tensorboard_directory)
@@ -320,13 +317,13 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
     # loop over epochs
     g_loss, d_loss, d_fake_loss, d_real_loss = None, None, None, None
     test_noise = tf.random.normal([25, noise_dim])
-    for epoch in range(nb_epochs):
+    for epoch in range(1, nb_epochs + 1):
         start = time.time()
 
         for batch_real_images in dataset:
-            input_noise = tf.random.normal([batch_size, noise_dim])
             g_loss, d_loss, d_fake_loss, d_real_loss = train_one_step(
-                input_noise, batch_real_images, generator, discriminator)
+                batch_size, noise_dim, batch_real_images,
+                generator, discriminator)
 
         # update metrics
         generator_metric.update_state(g_loss)
@@ -336,6 +333,12 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
 
         # write summaries
         with summary_writer.as_default():
+            tf.summary.scalar('loss_generator_bis',
+                              g_loss,
+                              step=epoch)
+            tf.summary.scalar('loss_discriminator_bis',
+                              d_loss,
+                              step=epoch)
             tf.summary.scalar('loss_generator',
                               generator_metric.result(),
                               step=epoch)
@@ -350,7 +353,7 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
                               step=epoch)
 
         # save model every 10 epochs
-        if (epoch + 1) % 10 == 0:
+        if epoch % 10 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
         # plot a sample of generated images
