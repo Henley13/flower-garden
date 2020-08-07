@@ -44,9 +44,6 @@ def plot_mosaic(images, nb_row, nb_col, framesize=(10, 10),
     h_, w_, channel = image_test.shape
     h = h_ + 4
     w = w_ + 4
-    #if channel != 3:
-    #    raise ValueError("Images have {0} channels instead of 3."
-    #                     .format(channel))
     if len(images) != nb_row * nb_col:
         raise ValueError("The mosaic requires {0}, but {1} are actually used."
                          .format(nb_row * nb_col, len(images)))
