@@ -82,7 +82,7 @@ if __name__ == "__main__":
     (X_train, _), (_, _) = tf.keras.datasets.mnist.load_data()
     X_train = X_train.reshape(X_train.shape[0], 28, 28, 1)
     X_train = tf.image.resize(X_train, (64, 64), antialias=True)
-    X_train = X_train.astype('float32')
+    X_train = tf.cast(X_train, "float32")
     X_train = (X_train - 127.5) / 127.5
     dataset = tf.data.Dataset.from_tensor_slices(X_train)
     dataset = dataset.shuffle(buffer_size=60000, seed=13)
