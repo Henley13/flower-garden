@@ -308,12 +308,6 @@ def generate_and_plot(generator, input_noise,
 
 def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
           training_directory):
-    # initialize summaries
-    tensorboard_directory = os.path.join(training_directory, "tensorboard")
-    if not os.path.isdir(tensorboard_directory):
-        os.mkdir(tensorboard_directory)
-    summary_writer = tf.summary.create_file_writer(tensorboard_directory)
-
     # initialize checkpoints
     checkpoints_directory = os.path.join(training_directory, "checkpoints")
     if not os.path.isdir(checkpoints_directory):
@@ -324,6 +318,16 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
         discriminator_optimizer=discriminator_optimizer,
         generator=generator,
         discriminator=discriminator)
+
+    # initialize summaries
+    tensorboard_directory = os.path.join(training_directory, "tensorboard")
+    if not os.path.isdir(tensorboard_directory):
+        os.mkdir(tensorboard_directory)
+    summary_writer = tf.summary.create_file_writer(tensorboard_directory)
+    profiler_directory = os.path.join(training_directory, "profiler")
+    if not os.path.isdir(profiler_directory):
+        os.mkdir(profiler_directory)
+    tf.summary.trace_on(graph=True, profiler=True)
 
     # loop over epochs
     test_noise = tf.random.normal([25, noise_dim])
@@ -342,6 +346,9 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
             tf.summary.scalar('loss_discriminator',
                               discriminator_loss.result(),
                               step=epoch)
+            tf.summary.trace_export(name="trace",
+                                    step=0,
+                                    profiler_outdir=profiler_directory)
 
         # save model every 10 epochs
         if epoch % 10 == 0:
