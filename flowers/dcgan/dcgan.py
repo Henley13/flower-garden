@@ -30,8 +30,6 @@ from tensorflow.keras.layers import (Dense, BatchNormalization, LeakyReLU,
                                      Conv2D, Reshape, Conv2DTranspose, Input,
                                      ReLU)
 
-from skimage import img_as_ubyte
-
 import flowers.utils as utils
 
 
@@ -220,40 +218,46 @@ def build_discriminator_model(input_shape=(64, 64, 3)):
     return model
 
 
-# ### Training functions ###
+# ### Training functions and parameters ###
 
-def generator_loss(fake_output):
-    loss = BinaryCrossentropy(
-        from_logits=True,
-        name='generator_loss')(tf.ones_like(fake_output), fake_output)
-    return loss
-
-
-def discriminator_losses(real_output, fake_output):
-    fake_loss = BinaryCrossentropy(
-        from_logits=True,
-        name='discriminator_fake_loss')(tf.zeros_like(fake_output), fake_output)
-    real_loss = BinaryCrossentropy(
-        from_logits=True,
-        name='discriminator_real_loss')(tf.ones_like(real_output), real_output)
-    total_loss = tf.math.add(fake_loss, real_loss, name="discriminator_loss")
-    return fake_loss, real_loss, total_loss
-
-
+generator_loss = Mean('loss_generator', dtype=tf.float32)
+discriminator_loss = Mean('loss_discriminator', dtype=tf.float32)
 generator_optimizer = Adam(
     learning_rate=0.0002,
     beta_1=0.5,
-    name='Adam_G')
+    name='g_Adam')
 discriminator_optimizer = Adam(
     learning_rate=0.0002,
     beta_1=0.5,
-    name='Adam_D')
+    name='d_Adam')
 
 
-generator_metric = Mean('loss_generator', dtype=tf.float32)
-discriminator_metric = Mean('loss_discriminator', dtype=tf.float32)
-discriminator_metric_fake = Mean('loss_discriminator_fake', dtype=tf.float32)
-discriminator_metric_real = Mean('loss_discriminator_real', dtype=tf.float32)
+def compute_generator_loss(fake_output):
+    # compute loss
+    loss = BinaryCrossentropy(
+        from_logits=True,
+        name='g_loss')(tf.ones_like(fake_output), fake_output)
+
+    # update relative variable
+    generator_loss(loss)
+
+    return loss
+
+
+def compute_discriminator_loss(real_output, fake_output):
+    # compute loss
+    fake_loss = BinaryCrossentropy(
+        from_logits=True,
+        name='d_loss_fake')(tf.zeros_like(fake_output), fake_output)
+    real_loss = BinaryCrossentropy(
+        from_logits=True,
+        name='d_loss_real')(tf.ones_like(real_output), real_output)
+    loss = tf.math.add(fake_loss, real_loss, name="d_loss")
+
+    # update relative variable
+    discriminator_loss(loss)
+
+    return loss
 
 
 @tf.function
@@ -262,18 +266,17 @@ def train_one_step(batch_size, noise_dim, real_images,
     # simulate random input
     input_noise = tf.random.normal([batch_size, noise_dim])
 
-    with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
+    with tf.GradientTape() as g_tape, tf.GradientTape() as d_tape:
         generated_images = generator(input_noise, training=True)
         real_output = discriminator(real_images, training=True)
         fake_output = discriminator(generated_images, training=True)
-        g_loss = generator_loss(fake_output)
-        d_fake_loss, d_real_loss, d_loss = discriminator_losses(
-            real_output, fake_output)
+        g_loss = compute_generator_loss(fake_output)
+        d_loss = compute_discriminator_loss(real_output, fake_output)
 
     # compute gradients
-    gradients_of_generator = gen_tape.gradient(
+    gradients_of_generator = g_tape.gradient(
         g_loss, generator.trainable_variables)
-    gradients_of_discriminator = disc_tape.gradient(
+    gradients_of_discriminator = d_tape.gradient(
         d_loss, discriminator.trainable_variables)
 
     # apply backpropagation
@@ -282,16 +285,21 @@ def train_one_step(batch_size, noise_dim, real_images,
     discriminator_optimizer.apply_gradients(
         zip(gradients_of_discriminator, discriminator.trainable_variables))
 
-    return g_loss, d_loss, d_fake_loss, d_real_loss
+    return g_loss, d_loss
 
 
 def generate_and_plot(generator, input_noise,
                       path_output=None, ext="png", show=True):
+    # generate images
     generated_images = generator(input_noise, training=False)
+
+    # format and cast generated images
     generated_images = generated_images.numpy()
     generated_images *= 127.5
     generated_images += 127.5
     generated_images = generated_images.astype(np.uint8)
+
+    # plot mosaic
     utils.plot_mosaic(generated_images, nb_row=5, nb_col=5, framesize=(10, 10),
                       path_output=path_output, ext=ext, show=show)
 
@@ -318,41 +326,21 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
         discriminator=discriminator)
 
     # loop over epochs
-    g_loss, d_loss, d_fake_loss, d_real_loss = None, None, None, None
     test_noise = tf.random.normal([25, noise_dim])
     for epoch in range(1, nb_epochs + 1):
         start = time.time()
 
         for batch_real_images in dataset:
-            g_loss, d_loss, d_fake_loss, d_real_loss = train_one_step(
-                batch_size, noise_dim, batch_real_images,
-                generator, discriminator)
-
-        # update metrics
-        generator_metric.update_state(g_loss)
-        discriminator_metric.update_state(d_loss)
-        discriminator_metric_fake.update_state(d_fake_loss)
-        discriminator_metric_real.update_state(d_real_loss)
+            train_one_step(batch_size, noise_dim, batch_real_images,
+                           generator, discriminator)
 
         # write summaries
         with summary_writer.as_default():
-            tf.summary.scalar('loss_generator_bis',
-                              g_loss,
-                              step=epoch)
-            tf.summary.scalar('loss_discriminator_bis',
-                              d_loss,
-                              step=epoch)
             tf.summary.scalar('loss_generator',
-                              generator_metric.result(),
+                              generator_loss.result(),
                               step=epoch)
             tf.summary.scalar('loss_discriminator',
-                              discriminator_metric.result(),
-                              step=epoch)
-            tf.summary.scalar('loss_discriminator_fake',
-                              discriminator_metric_fake.result(),
-                              step=epoch)
-            tf.summary.scalar('loss_discriminator_real',
-                              discriminator_metric_real.result(),
+                              discriminator_loss.result(),
                               step=epoch)
 
         # save model every 10 epochs
@@ -368,15 +356,14 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
         end = time.time()
         duration = end - start
         print("Epoch {0} ({1:0.3f} sec): Generator Loss {2:0.3f} | "
-              "Discriminator Loss {3:0.3f} (fake {4:0.3f}, real {5:0.3f})"
-              .format(epoch, duration, g_loss,
-                      d_loss, d_fake_loss, d_real_loss))
+              "Discriminator Loss {3:0.3f}"
+              .format(epoch, duration,
+                      generator_loss.result(),
+                      discriminator_loss.result()))
 
         # reset metrics at every epoch
-        generator_metric.reset_states()
-        discriminator_metric.reset_states()
-        discriminator_metric_fake.reset_states()
-        discriminator_metric_real.reset_states()
+        generator_loss.reset_states()
+        discriminator_loss.reset_states()
 
     # save and plot at the end of the training
     checkpoint.save(file_prefix=checkpoint_prefix)

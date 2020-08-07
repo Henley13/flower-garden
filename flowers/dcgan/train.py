@@ -60,18 +60,29 @@ if __name__ == "__main__":
     start_time, training_directory = utils.initialize_script(log_directory)
 
     # prepare dataset
+    # print("Prepare dataset...")
+    # path = os.path.join(input_directory, "data.csv")
+    # df = pd.read_csv(path, sep=";", encoding="utf-8")
+    # filenames = list(df.loc[:, "filename"])
+    # images = np.zeros((len(filenames), 64, 64, 3), dtype=np.uint8)
+    # for i, filename in enumerate(filenames):
+    #     path = os.path.join(input_directory, "data", filename)
+    #     image = utils.read_image(path)
+    #     image = tf.image.resize(image, (64, 64), antialias=True)
+    #     images[i] = image
+    # X_train = images.copy()
+    # X_train = X_train.astype(np.float32)
+    # X_train = (X_train - 127.5) / 127.5
+    # dataset = tf.data.Dataset.from_tensor_slices(X_train)
+    # dataset = dataset.shuffle(buffer_size=60000, seed=13)
+    # dataset = dataset.batch(batch_size=batch_size)
+    # print("\r Dataset length: {0}".format(len(X_train)), "\n")
+
     print("Prepare dataset...")
-    path = os.path.join(input_directory, "data.csv")
-    df = pd.read_csv(path, sep=";", encoding="utf-8")
-    filenames = list(df.loc[:, "filename"])
-    images = np.zeros((len(filenames), 64, 64, 3), dtype=np.uint8)
-    for i, filename in enumerate(filenames):
-        path = os.path.join(input_directory, "data", filename)
-        image = utils.read_image(path)
-        image = tf.image.resize(image, (64, 64), antialias=True)
-        images[i] = image
-    X_train = images.copy()
-    X_train = X_train.astype(np.float32)
+    (X_train, _), (_, _) = tf.keras.datasets.mnist.load_data()
+    X_train = X_train.reshape(X_train.shape[0], 28, 28, 1)
+    X_train = tf.image.resize(X_train, (64, 64), antialias=True)
+    X_train = X_train.astype('float32')
     X_train = (X_train - 127.5) / 127.5
     dataset = tf.data.Dataset.from_tensor_slices(X_train)
     dataset = dataset.shuffle(buffer_size=60000, seed=13)
