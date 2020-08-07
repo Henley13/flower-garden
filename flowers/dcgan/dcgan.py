@@ -334,9 +334,19 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
     for epoch in range(1, nb_epochs + 1):
         start = time.time()
 
-        for batch_real_images in dataset:
+        for i_batch, batch_real_images in enumerate(dataset):
+
+            if epoch == 1 and i_batch == 0:
+                tf.summary.trace_on(graph=True, profiler=True)
+
             train_one_step(batch_size, noise_dim, batch_real_images,
                            generator, discriminator)
+
+            if epoch == 1 and i_batch == 0:
+                with summary_writer.as_default():
+                    tf.summary.trace_export("graph_dcgan",
+                                            step=epoch,
+                                            profiler_outdir=profiler_directory)
 
         # write summaries
         with summary_writer.as_default():
@@ -346,9 +356,6 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
             tf.summary.scalar('loss_discriminator',
                               discriminator_loss.result(),
                               step=epoch)
-            tf.summary.trace_export("trace",
-                                    step=epoch,
-                                    profiler_outdir=profiler_directory)
 
         # save model every 10 epochs
         if epoch % 10 == 0:
