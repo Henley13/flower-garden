@@ -110,7 +110,7 @@ def build_generator_model(input_shape=(100,)):
 
     # deconvolution 4
     deconv4 = Conv2DTranspose(
-        filters=3,
+        filters=1,
         kernel_size=(5, 5),
         strides=(2, 2),
         activation="tanh",
@@ -130,7 +130,7 @@ def build_generator_model(input_shape=(100,)):
 
 # ### Discriminator ###
 
-def build_discriminator_model(input_shape=(64, 64, 3)):
+def build_discriminator_model(input_shape=(64, 64, 1)):
     # define input layer
     input_ = Input(
         shape=input_shape,

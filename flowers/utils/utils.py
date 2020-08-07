@@ -61,7 +61,7 @@ def check_directories(path_directories):
 
 
 # ### Script routines ###
-
+# TODO fix these log paths
 def initialize_script(log_directory, experiment_name=None):
     # check parameters
     check_parameter(log_directory=str)
