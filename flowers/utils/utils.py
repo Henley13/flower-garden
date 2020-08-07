@@ -61,7 +61,7 @@ def check_directories(path_directories):
 
 
 # ### Script routines ###
-# TODO fix these log paths
+
 def initialize_script(log_directory, experiment_name=None):
     # check parameters
     check_parameter(log_directory=str)
@@ -91,7 +91,7 @@ def initialize_script(log_directory, experiment_name=None):
 
     # copy python script in the log directory
     if previous_filename is not None:
-        path_output = os.path.join(path_log_file,
+        path_output = os.path.join(path_log_directory,
                                    os.path.basename(previous_filename))
         shutil.copyfile(previous_filename, path_output)
 

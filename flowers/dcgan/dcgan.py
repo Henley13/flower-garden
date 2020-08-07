@@ -346,8 +346,8 @@ def train(generator, discriminator, dataset, nb_epochs, batch_size, noise_dim,
             tf.summary.scalar('loss_discriminator',
                               discriminator_loss.result(),
                               step=epoch)
-            tf.summary.trace_export(name="trace",
-                                    step=0,
+            tf.summary.trace_export("trace",
+                                    step=epoch,
                                     profiler_outdir=profiler_directory)
 
         # save model every 10 epochs

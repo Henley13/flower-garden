@@ -57,7 +57,8 @@ if __name__ == "__main__":
     utils.check_directories([input_directory, output_directory, log_directory])
 
     # initialize script
-    start_time, training_directory = utils.initialize_script(log_directory)
+    start_time, training_directory = utils.initialize_script(
+        log_directory, experiment_name="train_dcgan")
 
     # prepare dataset
     # print("Prepare dataset...")
