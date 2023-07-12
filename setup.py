@@ -9,7 +9,7 @@ Setup script.
 from setuptools import setup, find_packages
 
 # Package meta-data.
-DESCRIPTION = 'Repository with generative dcgan.'
+DESCRIPTION = 'Repository with generative models.'
 
 # package version
 VERSION = None
