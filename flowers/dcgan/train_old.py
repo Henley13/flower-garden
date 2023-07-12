@@ -6,17 +6,26 @@
 
 import os
 import argparse
-import tensorflow as tf
+import random
+import torch
 
 import pandas as pd
 import numpy as np
 
 import flowers.utils as utils
 
-from dcgan import build_generator_model, build_discriminator_model, train
+from dcgan import build_generator_model
+from dcgan import build_discriminator_model
+from dcgan import train
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+# random seed for reproducible results
+random_seed = 13
+random.seed(random_seed)
+torch.manual_seed(random_seed)
+torch.use_deterministic_algorithms(True)
 
 
 if __name__ == "__main__":

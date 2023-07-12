@@ -7,6 +7,7 @@ The flowers.utils subpackage includes functions to load data, plot and several
 utilities functions.
 """
 
+from .io import CustomImageDataset
 from .io import read_image
 from .io import save_image
 from .io import get_md5_number
@@ -21,6 +22,7 @@ from .utils import end_script
 
 
 _io = [
+    "CustomImageDataset",
     "read_image",
     "save_image",
     "get_md5_number",

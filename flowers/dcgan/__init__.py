@@ -6,14 +6,15 @@
 The flowers.dcgan subpackage includes functions to train and use a DCGAN.
 """
 
-from .dcgan import build_generator_model
-from .dcgan import build_discriminator_model
-from .dcgan import train
+from .dcgan import init_weights
+from .dcgan import Generator
+from .dcgan import Discriminator
 
 
 _dcgan = [
-    "build_generator_model",
-    "build_discriminator_model",
-    "train"]
+    "init_weights",
+    "Generator",
+    "Discriminator"
+]
 
 __all__ = _dcgan
