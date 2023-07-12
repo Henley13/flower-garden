@@ -42,7 +42,7 @@ CLASSIFIERS = [
     'Operating System :: Unix',
     'Operating System :: MacOS',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.7.0',
+    'Programming Language :: Python :: 3.10',
     'License :: OSI Approved :: MIT License'
 ]
 
@@ -57,7 +57,7 @@ setup(name='flowers-garden',
       url='https://github.com/Henley13/flowers-garden',
       packages=find_packages(),
       license='MIT License',
-      python_requires='==3.7.0',
+      python_requires='>=3.10',
       install_requires=REQUIREMENTS,
       classifiers=CLASSIFIERS
       )
