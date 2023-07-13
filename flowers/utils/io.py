@@ -25,12 +25,10 @@ class CustomImageDataset(Dataset):
     def __init__(self,
                  metadata_file,
                  image_directory,
-                 transform=None,
-                 target_transform=None):
+                 transform=None):
         self.image_metadata = metadata_file
         self.image_directory = image_directory
         self.transform = transform
-        self.target_transform = target_transform
 
     def __len__(self):
         return len(self.image_metadata)
@@ -40,15 +38,12 @@ class CustomImageDataset(Dataset):
         filename = self.image_metadata.loc[idx, "filename"]
         path_image = os.path.join(self.image_directory, filename)
         image = read_image(path_image)
-        label = int(self.image_metadata.loc[idx, "label_int"])
 
         # transform if necessary
         if self.transform:
             image = self.transform(image)
-        if self.target_transform:
-            label = self.target_transform(label)
 
-        return image, label
+        return image
 
 
 # ### Read ###
