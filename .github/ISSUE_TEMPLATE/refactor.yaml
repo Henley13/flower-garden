@@ -1,0 +1,20 @@
+name: "Code Refactoring"
+description: Suggest a code refactoring to improve the project.
+title: "[Refactor] "
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please describe what needs to be refactored and why.
+      placeholder: Detailed description of the code area and refactoring needed...
+    validations:
+      required: true
+  - type: textarea
+    id: suggested_approach
+    attributes:
+      label: "Suggested Approach"
+      description: Please describe your suggested approach for the refactoring.
+    validations:
+      required: false

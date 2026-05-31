@@ -1,0 +1,42 @@
+name: "Testing Issue"
+description: Report an issue with tests or suggest new tests.
+title: "[Test] "
+labels: ["test"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please describe the testing issue or suggestion.
+      placeholder: Detailed description of the testing issue or suggestion...
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: "Issue Type"
+      description: What type of testing issue is this?
+      options:
+        - Failing test
+        - Missing test
+        - Flaky test
+        - Test performance
+        - Test coverage
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Test Logs"
+      description: If applicable, paste any relevant test logs. This will be automatically formatted into code.
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Suggested Approach"
+      description: If you have any ideas on how to address this testing issue, please share them here.
+    validations:
+      required: false
