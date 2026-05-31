@@ -1,0 +1,34 @@
+# <type>(<scope>): <description>
+
+# <body> (optional)
+
+# <footer> (optional)
+
+
+# --------------------------------------------------
+# <type>(<scope>): <description>
+#
+# Types: bug, build, ci, docs, feat, refactor, test
+# Scope: modified file
+# Description:
+# - one short line
+# - use imperative sentence ("add" not "added")
+# - no uppercase letter at the beginning
+# - no period at the end
+# --------------------------------------------------
+
+
+# --------------------------------------------------
+# <body> (optional)
+#
+# Body:
+# - more detailed description, if necessary
+# - list of additional changes
+# --------------------------------------------------
+
+
+# --------------------------------------------------
+# <footer> (optional)
+#
+# Footer: associated issues, PRs, etc...
+# --------------------------------------------------
