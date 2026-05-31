@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools >= 80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flowers-garden"
+description = "A zoo of image generation models applied to flower images."
+authors = [{name = "Arthur Imbert", email = "arthur.imbert.pro@gmail.com"}]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "matplotlib>=3.10.9",
+    "numpy>=2.4.6",
+    "scikit-image>=0.26.0",
+]
+
+[dependency-groups]
+cpu = [
+    "torch>=2.12.0",
+    "torchvision>=0.27.0",
+]
+gpu = [
+    "torch>=2.12.0",
+    "torchvision>=0.27.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Henley13/flowers-garden"
+Repository = "https://github.com/Henley13/flowers-garden"
+
+[tool.uv]
+default-groups = ["cpu"]
+environments = [
+    "sys_platform == 'darwin'",
+    "sys_platform == 'linux'",
+]
+conflicts = [
+    [
+        { group = "cpu" },
+        { group = "gpu" },
+    ],
+]
+
+[tool.setuptools.packages.find]
+include = ["flowers*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "flowers.__version__"}
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu130", group = "gpu" },
+  { index = "pytorch-cpu", group = "cpu" },
+]
+torchvision = [
+  { index = "pytorch-cu130", group = "gpu" },
+  { index = "pytorch-cpu", group = "cpu" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
