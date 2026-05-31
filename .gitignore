@@ -1,113 +1,42 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Ignore everything by default, then add specific elements
+*
 
-# C extensions
-*.so
+# Package
+!flowers/
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+# uv dependencies
+!pyproject.toml
+!uv.lock
+!.python-version
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Documentation
+!images/
+!docs/
+!README.md
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# Dockerfile
+!Dockerfile
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
+# Makefile
+!Makefile
 
-# Translations
-*.mo
-*.pot
+# Licence
+!LICENSE
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
+# pre-commit files
+!.pre-commit-config.yaml
 
-# Flask stuff:
-instance/
-.webassets-cache
+# Context files
+!.dockerignore
+!.gitignore
 
-# Scrapy stuff:
-.scrapy
+# GitHub files
+!.github/
+!.github/ISSUE_TEMPLATE/
+!.github/ISSUE_TEMPLATE/*.yaml
+!.github/workflows/
+!.github/workflows/*.yaml
+!.github/pull_request_template.md
 
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-
-# mac dotfiles
-.DS_Store
-
-# Pycharm
-.idea/
-
-# folders
-notebooks/
+# Commit message
+!.gitmessage
