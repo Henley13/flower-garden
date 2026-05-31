@@ -1,0 +1,27 @@
+# Ignore everything by default, then add specific elements
+*
+
+# Package
+!flowers/
+
+# uv dependencies
+!pyproject.toml
+!uv.lock
+!.python-version
+
+# Documentation
+!images/
+!docs/
+!README.md
+
+# Dockerfile
+!Dockerfile
+
+# Licence
+!LICENSE
+
+# pre-commit files
+!.pre-commit-config.yaml
+
+# Context files
+!.dockerignore
