@@ -1,0 +1,27 @@
+name: "Bug Report"
+description: Describe a bug and a potential solution to fix it.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please enter an explicit description of your bug.
+      placeholder: Clear and concise description of what the bug is...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Reproduction Steps"
+      description: Please detail the steps to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Solution"
+      description: If applicable, suggest a potential fix for the bug.
+    validations:
+      required: false

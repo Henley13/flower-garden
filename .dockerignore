@@ -17,9 +17,6 @@
 # Dockerfile
 !Dockerfile
 
-# Makefile
-!Makefile
-
 # Licence
 !LICENSE
 
@@ -28,15 +25,3 @@
 
 # Context files
 !.dockerignore
-!.gitignore
-
-# GitHub files
-!.github/
-!.github/ISSUE_TEMPLATE/
-!.github/ISSUE_TEMPLATE/*.yaml
-!.github/workflows/
-!.github/workflows/*.yaml
-!.github/pull_request_template.md
-
-# Commit message
-!.gitmessage

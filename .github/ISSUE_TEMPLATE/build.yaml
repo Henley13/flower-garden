@@ -1,0 +1,36 @@
+name: "Build Issue"
+description: Report an issue related to building the project.
+title: "[Build] "
+labels: ["build"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please describe the build issue you are experiencing.
+      placeholder: Detailed description of the build problem...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment"
+      description: Please provide details about your build environment.
+      placeholder: OS, compiler version, dependencies, etc.
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Build Logs"
+      description: Please paste any relevant build logs. This will be automatically formatted into code.
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Suggested Solution"
+      description: If you have any ideas on how to fix this build issue, please share them here.
+    validations:
+      required: false

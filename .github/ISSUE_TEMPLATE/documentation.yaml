@@ -1,0 +1,36 @@
+name: "Documentation Issue"
+description: Suggest a change in the documentation.
+title: "[Documentation] "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please enter an explicit description of your suggestion.
+      placeholder: Detailed description of the documentation change needed...
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: "Documentation Type"
+      description: What type of documentation change is needed?
+      options:
+        - New content
+        - Update existing content
+        - Fix errors/typos
+        - Improve clarity/readability
+        - Add examples
+        - Restructure organization
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: page
+    attributes:
+      label: "Page"
+      description: If applicable, list the documentation pages impacted by the issue.
+      placeholder: URLs or file paths of affected documentation...
+    validations:
+      required: false

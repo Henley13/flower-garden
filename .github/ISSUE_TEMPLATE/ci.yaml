@@ -1,0 +1,36 @@
+name: "CI Pipeline Issue"
+description: Report an issue with the CI/CD pipeline.
+title: "[CI] "
+labels: ["ci"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please describe the issue with the CI/CD pipeline.
+      placeholder: Detailed description of the CI/CD issue...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Pipeline Logs"
+      description: Please paste any relevant CI/CD logs. This will be automatically formatted into code.
+      render: bash
+    validations:
+      required: false
+  - type: input
+    id: pipeline_url
+    attributes:
+      label: "Pipeline URL"
+      description: If applicable, provide a link to the failing pipeline run.
+      placeholder: https://github.com/...
+    validations:
+      required: false
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Suggested Fix"
+      description: If you have any ideas on how to fix this CI/CD issue, please share them here.
+    validations:
+      required: false
